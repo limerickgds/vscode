@@ -7,15 +7,16 @@ import 'mocha';
 import * as assert from 'assert';
 import { withRandomFileEditor } from './testUtils';
 import * as vscode from 'vscode';
-import { parsePartialStylesheet, getNode } from '../util';
+import { parsePartialStylesheet, getFlatNode } from '../util';
 import { isValidLocationForEmmetAbbreviation } from '../abbreviationActions';
 
 suite('Tests for partial parse of Stylesheets', () => {
 
 	function isValid(doc: vscode.TextDocument, range: vscode.Range, syntax: string): boolean {
 		const rootNode = parsePartialStylesheet(doc, range.end);
-		const currentNode = getNode(rootNode, range.end, true);
-		return isValidLocationForEmmetAbbreviation(doc, rootNode, currentNode, 'css', range.end, range);
+		const endOffset = doc.offsetAt(range.end);
+		const currentNode = getFlatNode(rootNode, endOffset, true);
+		return isValidLocationForEmmetAbbreviation(doc, rootNode, currentNode, syntax, endOffset, range);
 	}
 
 	test('Ignore block comment inside rule', function (): any {
@@ -27,7 +28,7 @@ p {
 	p.
 } p
 `;
-		return withRandomFileEditor(cssContents, '.css', (editor, doc) => {
+		return withRandomFileEditor(cssContents, '.css', (_, doc) => {
 			let rangesForEmmet = [
 				new vscode.Range(3, 18, 3, 19),		// Same line after block comment
 				new vscode.Range(4, 1, 4, 2),		// p after block comment
@@ -40,7 +41,7 @@ p {
 				new vscode.Range(3, 13, 3, 14),		// p just before ending of block comment
 				new vscode.Range(6, 2, 6, 3)		// p after ending of block
 
-			]
+			];
 			rangesForEmmet.forEach(range => {
 				assert.equal(isValid(doc, range, 'css'), true);
 			});
@@ -62,7 +63,7 @@ dn	{
 	@
 } bg
 `;
-		return withRandomFileEditor(sassContents, '.scss', (editor, doc) => {
+		return withRandomFileEditor(sassContents, '.scss', (_, doc) => {
 			let rangesNotEmmet = [
 				new vscode.Range(1, 0, 1, 4),		// Selector
 				new vscode.Range(2, 3, 2, 7),		// Line commented selector
@@ -91,7 +92,7 @@ comment */
 	p.
 } p
 `;
-		return withRandomFileEditor(cssContents, '.css', (editor, doc) => {
+		return withRandomFileEditor(cssContents, '.css', (_, doc) => {
 			let rangesForEmmet = [
 				new vscode.Range(7, 18, 7, 19),		// Same line after block comment
 				new vscode.Range(8, 1, 8, 2),		// p after block comment
@@ -130,7 +131,7 @@ comment */
 	}
 }}}
 `;
-		return withRandomFileEditor(sassContents, '.scss', (editor, doc) => {
+		return withRandomFileEditor(sassContents, '.scss', (_, doc) => {
 			let rangesForEmmet = [
 				new vscode.Range(2, 1, 2, 2),		// Inside a ruleset before errors
 				new vscode.Range(3, 1, 3, 2),		// Inside a ruleset after no serious error
@@ -155,7 +156,7 @@ comment */
 		const sassContents = `
 .foo{dn}.bar{.boo{dn}dn}.comd{/*{dn*/p{div{dn}} }.foo{.other{dn}} dn
 `;
-		return withRandomFileEditor(sassContents, '.scss', (editor, doc) => {
+		return withRandomFileEditor(sassContents, '.scss', (_, doc) => {
 			let rangesForEmmet = [
 				new vscode.Range(1, 5, 1, 7),		// Inside a ruleset
 				new vscode.Range(1, 18, 1, 20),		// Inside a nested ruleset
@@ -194,7 +195,7 @@ p.#{dn} {
 	dn
 }
 `;
-		return withRandomFileEditor(sassContents, '.scss', (editor, doc) => {
+		return withRandomFileEditor(sassContents, '.scss', (_, doc) => {
 			let rangesForEmmet = [
 				new vscode.Range(2, 1, 2, 4),		// p.3 inside a ruleset whose selector uses interpolation
 				new vscode.Range(4, 1, 4, 3)		// dn inside ruleset after property with variable
@@ -234,7 +235,7 @@ ment */{
 	op.3
 }
 `;
-		return withRandomFileEditor(sassContents, '.scss', (editor, doc) => {
+		return withRandomFileEditor(sassContents, '.scss', (_, doc) => {
 			let rangesForEmmet = [
 				new vscode.Range(2, 14, 2, 21),		// brs6-2p with a block commented line comment ('/* */' overrides '//')
 				new vscode.Range(3, 1, 3, 3),		// dn after a line with combined comments inside a ruleset

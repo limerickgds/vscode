@@ -8,30 +8,15 @@
 'use strict';
 
 const withDefaults = require('../shared.webpack.config');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = withDefaults({
 	context: path.join(__dirname, 'client'),
 	entry: {
-		extension: './src/cssMain.ts',
-	},
-	resolve: {
-		mainFields: ['module', 'main'],
-		extensions: ['.ts', '.js'] // support ts-files and js-files
+		extension: './src/node/cssClientMain.ts',
 	},
 	output: {
-		filename: 'cssMain.js',
-		path: path.join(__dirname, 'client', 'dist'),
-		libraryTarget: "commonjs",
-	},
-	externals: {
-		'./files': 'commonjs', // ignored because it doesn't exist
-	},
-	plugins: [
-		new CopyWebpackPlugin([
-			{ from: './out/*.sh', to: '[name].sh' },
-			{ from: './out/nls.*.json', to: '[name].json' }
-		])
-	]
+		filename: 'cssClientMain.js',
+		path: path.join(__dirname, 'client', 'dist', 'node')
+	}
 });

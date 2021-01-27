@@ -12,11 +12,10 @@ const withDefaults = require('../shared.webpack.config');
 module.exports = withDefaults({
 	context: __dirname,
 	entry: {
-		extension: './src/extension.ts',
+		extension: './src/extensionEditingMain.ts',
 	},
-	resolve: {
-		mainFields: ['module', 'main'],
-		extensions: ['.ts', '.js'] // support ts-files and js-files
+	output: {
+		filename: 'extensionEditingMain.js'
 	},
 	externals: {
 		'../../../product.json': 'commonjs ../../../product.json',

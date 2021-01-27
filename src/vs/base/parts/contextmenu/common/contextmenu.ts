@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 export interface ICommonContextMenuItem {
 	label?: string;
 
@@ -38,7 +36,6 @@ export interface IPopupOptions {
 	x?: number;
 	y?: number;
 	positioningItem?: number;
-	onHide?: () => void;
 }
 
 export const CONTEXT_MENU_CHANNEL = 'vscode:contextmenu';

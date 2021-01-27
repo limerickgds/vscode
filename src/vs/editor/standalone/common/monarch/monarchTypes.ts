@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
 
 /*
  * Interface types for Monarch language definitions
@@ -23,6 +22,10 @@ export interface IMonarchLanguage {
 	 */
 	ignoreCase?: boolean;
 	/**
+	 * is the language unicode-aware? (i.e., /\u{1D306}/)
+	 */
+	unicode?: boolean;
+	/**
 	 * if no match in the tokenizer assign this token class (default 'source')
 	 */
 	defaultToken?: string;
@@ -38,6 +41,11 @@ export interface IMonarchLanguage {
 	 * attach this to every token class (by default '.' + name)
 	 */
 	tokenPostfix?: string;
+	/**
+	 * include line feeds (in the form of a \n character) at the end of lines
+	 * Defaults to false
+	 */
+	includeLF?: boolean;
 }
 
 /**
@@ -45,9 +53,9 @@ export interface IMonarchLanguage {
  * 		shorthands: [reg,act] == { regex: reg, action: act}
  *		and       : [reg,act,nxt] == { regex: reg, action: act{ next: nxt }}
  */
-export type IShortMonarchLanguageRule1 = [RegExp, IMonarchLanguageAction];
+export type IShortMonarchLanguageRule1 = [string | RegExp, IMonarchLanguageAction];
 
-export type IShortMonarchLanguageRule2 = [RegExp, IMonarchLanguageAction, string];
+export type IShortMonarchLanguageRule2 = [string | RegExp, IMonarchLanguageAction, string];
 
 export interface IExpandedMonarchLanguageRule {
 	/**
@@ -106,7 +114,7 @@ export interface IExpandedMonarchLanguageAction {
 	 */
 	bracket?: string;
 	/**
-	 * switch to embedded language (useing the mimetype) or get out using "@pop"
+	 * switch to embedded language (using the mimetype) or get out using "@pop"
 	 */
 	nextEmbedded?: string;
 	/**
@@ -129,7 +137,7 @@ export interface IMonarchLanguageBracket {
 	 */
 	open: string;
 	/**
-	 * closeing bracket
+	 * closing bracket
 	 */
 	close: string;
 	/**

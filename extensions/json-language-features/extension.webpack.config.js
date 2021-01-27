@@ -8,30 +8,21 @@
 'use strict';
 
 const withDefaults = require('../shared.webpack.config');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
+const webpack = require('webpack');
 
-module.exports = withDefaults({
+const config = withDefaults({
 	context: path.join(__dirname, 'client'),
 	entry: {
-		extension: './src/jsonMain.ts',
-	},
-	resolve: {
-		mainFields: ['module', 'main'],
-		extensions: ['.ts', '.js'] // support ts-files and js-files
+		extension: './src/node/jsonClientMain.ts'
 	},
 	output: {
-		filename: 'jsonMain.js',
-		path: path.join(__dirname, 'client', 'dist'),
-		libraryTarget: "commonjs",
-	},
-	externals: {
-		'./files': 'commonjs', // ignored because it doesn't exist
-	},
-	plugins: [
-		new CopyWebpackPlugin([
-			{ from: './out/*.sh', to: '[name].sh' },
-			{ from: './out/nls.*.json', to: '[name].json' }
-		])
-	]
+		filename: 'jsonClientMain.js',
+		path: path.join(__dirname, 'client', 'dist', 'node')
+	}
 });
+
+// add plugin, don't replace inherited
+config.plugins.push(new webpack.IgnorePlugin(/vertx/)); // request-light dependency
+
+module.exports = config;

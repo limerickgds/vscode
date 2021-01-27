@@ -2,8 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
-
 
 import * as assert from 'assert';
 import { URI } from 'vs/base/common/uri';
@@ -162,11 +160,11 @@ suite('Marker Service', () => {
 		let data = randomMarkerData();
 		let service = new markerService.MarkerService();
 
-		data.message = undefined;
+		data.message = undefined!;
 		service.changeOne('far', URI.parse('some:uri/path'), [data]);
 		assert.equal(service.read({ owner: 'far' }).length, 0);
 
-		data.message = null;
+		data.message = null!;
 		service.changeOne('far', URI.parse('some:uri/path'), [data]);
 		assert.equal(service.read({ owner: 'far' }).length, 0);
 
@@ -175,7 +173,7 @@ suite('Marker Service', () => {
 		assert.equal(service.read({ owner: 'far' }).length, 1);
 	});
 
-	test('MapMap#remove returns bad values, https://github.com/Microsoft/vscode/issues/13548', () => {
+	test('MapMap#remove returns bad values, https://github.com/microsoft/vscode/issues/13548', () => {
 		let service = new markerService.MarkerService();
 
 		service.changeOne('o', URI.parse('some:uri/1'), [randomMarkerData()]);
